@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>IoEffects.C</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library IoEffects.C</h1>
+
+<div class="code">
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="IoEffects.Effects.html#"><span class="id" type="library">Effects</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A computation can either return a pure value, do an external call or
+    compose two computations. 
+</div>
+<div class="code">
+<span class="id" type="keyword">Inductive</span> <a name="t"><span class="id" type="inductive">t</span></a> (<span class="id" type="var">E</span> : <a class="idref" href="IoEffects.Effects.html#t"><span class="id" type="record">Effects.t</span></a>) : <span class="id" type="keyword">Type</span> → <span class="id" type="keyword">Type</span> :=<br/>
+| <a name="Ret"><span class="id" type="constructor">Ret</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">A</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">x</span> : <a class="idref" href="IoEffects.C.html#A"><span class="id" type="variable">A</span></a>), <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">t</span></a> <span class="id" type="var">E</span> <a class="idref" href="IoEffects.C.html#A"><span class="id" type="variable">A</span></a><br/>
+| <a name="Call"><span class="id" type="constructor">Call</span></a> : <span class="id" type="keyword">∀</span> (<span class="id" type="var">command</span> : <a class="idref" href="IoEffects.Effects.html#command"><span class="id" type="projection">Effects.command</span></a> <span class="id" type="var">E</span>), <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">t</span></a> <span class="id" type="var">E</span> (<a class="idref" href="IoEffects.Effects.html#answer"><span class="id" type="projection">Effects.answer</span></a> <span class="id" type="var">E</span> <a class="idref" href="IoEffects.C.html#command"><span class="id" type="variable">command</span></a>)<br/>
+| <span class="id" type="keyword">Let</span> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Type</span>}, <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">t</span></a> <span class="id" type="var">E</span> <a class="idref" href="IoEffects.C.html#A"><span class="id" type="variable">A</span></a> → (<a class="idref" href="IoEffects.C.html#A"><span class="id" type="variable">A</span></a> → <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">t</span></a> <span class="id" type="var">E</span> <a class="idref" href="IoEffects.C.html#B"><span class="id" type="variable">B</span></a>) → <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">t</span></a> <span class="id" type="var">E</span> <a class="idref" href="IoEffects.C.html#B"><span class="id" type="variable">B</span></a>.<br/>
+<span class="id" type="var">Arguments</span> <a class="idref" href="IoEffects.C.html#Ret"><span class="id" type="constructor">Ret</span></a> {<span class="id" type="var">E</span> <span class="id" type="var">A</span>} <span class="id" type="var">_</span>.<br/>
+<span class="id" type="var">Arguments</span> <a class="idref" href="IoEffects.C.html#Call"><span class="id" type="constructor">Call</span></a> <span class="id" type="var">E</span> <span class="id" type="var">_</span>.<br/>
+<span class="id" type="var">Arguments</span> <span class="id" type="keyword">Let</span> {<span class="id" type="var">E</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span>} <span class="id" type="var">_</span> <span class="id" type="var">_</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Some optional notations. 
+</div>
+<div class="code">
+<span class="id" type="keyword">Module</span> <a name="Notations"><span class="id" type="module">Notations</span></a>.<br/>
+</div>
+
+<div class="doc">
+A nicer notation for `Ret`. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="Notations.ret"><span class="id" type="definition">ret</span></a> {<span class="id" type="var">E</span> : <a class="idref" href="IoEffects.Effects.html#t"><span class="id" type="record">Effects.t</span></a>} {<span class="id" type="var">A</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">x</span> : <a class="idref" href="IoEffects.C.html#A"><span class="id" type="variable">A</span></a>) : <a class="idref" href="IoEffects.C.html#Notations.t"><span class="id" type="inductive">t</span></a> <a class="idref" href="IoEffects.C.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.C.html#A"><span class="id" type="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="IoEffects.C.html#Notations.Ret"><span class="id" type="constructor">Ret</span></a> <a class="idref" href="IoEffects.C.html#x"><span class="id" type="variable">x</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A nicer notation for `Call`. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="Notations.call"><span class="id" type="definition">call</span></a> (<span class="id" type="var">E</span> : <a class="idref" href="IoEffects.Effects.html#t"><span class="id" type="record">Effects.t</span></a>) (<span class="id" type="var">command</span> : <a class="idref" href="IoEffects.Effects.html#command"><span class="id" type="projection">Effects.command</span></a> <a class="idref" href="IoEffects.C.html#E"><span class="id" type="variable">E</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;: <a class="idref" href="IoEffects.C.html#Notations.t"><span class="id" type="inductive">t</span></a> <a class="idref" href="IoEffects.C.html#E"><span class="id" type="variable">E</span></a> (<a class="idref" href="IoEffects.Effects.html#answer"><span class="id" type="projection">Effects.answer</span></a> <a class="idref" href="IoEffects.C.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.C.html#command"><span class="id" type="variable">command</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="IoEffects.C.html#Notations.Call"><span class="id" type="constructor">Call</span></a> <a class="idref" href="IoEffects.C.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.C.html#command"><span class="id" type="variable">command</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A nicer notation for `Let`. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Notation</span> <a name="Notations.::'let!'_x_':='_x_'in'_x"><span class="id" type="notation">"</span></a>'let!' x ':=' X 'in' Y" :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="keyword">Let</span> <span class="id" type="var">X</span> (<span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> ⇒ <span class="id" type="var">Y</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 200, <span class="id" type="var">x</span> <span class="id" type="var">ident</span>, <span class="id" type="var">X</span> <span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 100, <span class="id" type="var">Y</span> <span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 200).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Let with a typed answer. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Notation</span> <a name="Notations.::'let!'_x_':'_x_':='_x_'in'_x"><span class="id" type="notation">"</span></a>'let!' x : A ':=' X 'in' Y" :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="keyword">Let</span> <span class="id" type="var">X</span> (<span class="id" type="keyword">fun</span> (<span class="id" type="var">x</span> : <span class="id" type="var">A</span>) ⇒ <span class="id" type="var">Y</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 200, <span class="id" type="var">x</span> <span class="id" type="var">ident</span>, <span class="id" type="var">X</span> <span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 100, <span class="id" type="var">A</span> <span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 200, <span class="id" type="var">Y</span> <span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 200).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Let ignoring the answer. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Notation</span> <a name="Notations.::'do!'_x_'in'_x"><span class="id" type="notation">"</span></a>'do!' X 'in' Y" :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="keyword">Let</span> <span class="id" type="var">X</span> (<span class="id" type="keyword">fun</span> <span class="id" type="var">_</span> ⇒ <span class="id" type="var">Y</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 200, <span class="id" type="var">X</span> <span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 100, <span class="id" type="var">Y</span> <span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 200).<br/>
+<span class="id" type="keyword">End</span> <a class="idref" href="IoEffects.C.html#Notations"><span class="id" type="module">Notations</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

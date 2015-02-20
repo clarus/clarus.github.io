@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>IoEffects.Run</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library IoEffects.Run</h1>
+
+<div class="code">
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="IoEffects.Effects.html#"><span class="id" type="library">Effects</span></a>.<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="IoEffects.C.html#"><span class="id" type="library">C</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A run is an execution of a computation with explicit answers for the
+    external calls. We define a run by induction on a computation. The `Intro`
+    operator is used to introduce a value of a given type, to help to answer
+    to the calls. 
+</div>
+<div class="code">
+<span class="id" type="keyword">Inductive</span> <a name="t"><span class="id" type="inductive">t</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">E</span> : <a class="idref" href="IoEffects.Effects.html#t"><span class="id" type="record">Effects.t</span></a>} {<span class="id" type="var">A</span> : <span class="id" type="keyword">Type</span>}, <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">C.t</span></a> <a class="idref" href="IoEffects.Run.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.Run.html#A"><span class="id" type="variable">A</span></a> → <a class="idref" href="IoEffects.Run.html#A"><span class="id" type="variable">A</span></a> → <span class="id" type="keyword">Type</span> :=<br/>
+| <a name="Ret"><span class="id" type="constructor">Ret</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">E</span> <span class="id" type="var">A</span>} (<span class="id" type="var">x</span> : <a class="idref" href="IoEffects.Run.html#A"><span class="id" type="variable">A</span></a>), <a class="idref" href="IoEffects.Run.html#t"><span class="id" type="inductive">t</span></a> (<a class="idref" href="IoEffects.C.html#Ret"><span class="id" type="constructor">C.Ret</span></a> (<span class="id" type="var">E</span> := <a class="idref" href="IoEffects.Run.html#E"><span class="id" type="variable">E</span></a>) <a class="idref" href="IoEffects.Run.html#x"><span class="id" type="variable">x</span></a>) <a class="idref" href="IoEffects.Run.html#x"><span class="id" type="variable">x</span></a><br/>
+| <a name="Call"><span class="id" type="constructor">Call</span></a> : <span class="id" type="keyword">∀</span> <span class="id" type="var">E</span> (<span class="id" type="var">command</span> : <a class="idref" href="IoEffects.Effects.html#command"><span class="id" type="projection">Effects.command</span></a> <a class="idref" href="IoEffects.Run.html#E"><span class="id" type="variable">E</span></a>) (<span class="id" type="var">answer</span> : <a class="idref" href="IoEffects.Effects.html#answer"><span class="id" type="projection">Effects.answer</span></a> <a class="idref" href="IoEffects.Run.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.Run.html#command"><span class="id" type="variable">command</span></a>),<br/>
+&nbsp;&nbsp;<a class="idref" href="IoEffects.Run.html#t"><span class="id" type="inductive">t</span></a> (<a class="idref" href="IoEffects.C.html#Call"><span class="id" type="constructor">C.Call</span></a> <a class="idref" href="IoEffects.Run.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.Run.html#command"><span class="id" type="variable">command</span></a>) <a class="idref" href="IoEffects.Run.html#answer"><span class="id" type="variable">answer</span></a><br/>
+| <span class="id" type="keyword">Let</span> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">E</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span>} {<span class="id" type="var">c_x</span> : <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">C.t</span></a> <a class="idref" href="IoEffects.Run.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.Run.html#B"><span class="id" type="variable">B</span></a>} {<span class="id" type="var">x</span> : <a class="idref" href="IoEffects.Run.html#B"><span class="id" type="variable">B</span></a>} {<span class="id" type="var">c_f</span> : <a class="idref" href="IoEffects.Run.html#B"><span class="id" type="variable">B</span></a> → <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">C.t</span></a> <a class="idref" href="IoEffects.Run.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.Run.html#A"><span class="id" type="variable">A</span></a>} {<span class="id" type="var">y</span> : <a class="idref" href="IoEffects.Run.html#A"><span class="id" type="variable">A</span></a>},<br/>
+&nbsp;&nbsp;<a class="idref" href="IoEffects.Run.html#t"><span class="id" type="inductive">t</span></a> <a class="idref" href="IoEffects.Run.html#c_x"><span class="id" type="variable">c_x</span></a> <a class="idref" href="IoEffects.Run.html#x"><span class="id" type="variable">x</span></a> → <a class="idref" href="IoEffects.Run.html#t"><span class="id" type="inductive">t</span></a> (<a class="idref" href="IoEffects.Run.html#c_f"><span class="id" type="variable">c_f</span></a> <a class="idref" href="IoEffects.Run.html#x"><span class="id" type="variable">x</span></a>) <a class="idref" href="IoEffects.Run.html#y"><span class="id" type="variable">y</span></a> → <a class="idref" href="IoEffects.Run.html#t"><span class="id" type="inductive">t</span></a> (<a class="idref" href="IoEffects.C.html#Let"><span class="id" type="constructor">C.Let</span></a> <a class="idref" href="IoEffects.Run.html#c_x"><span class="id" type="variable">c_x</span></a> <a class="idref" href="IoEffects.Run.html#c_f"><span class="id" type="variable">c_f</span></a>) <a class="idref" href="IoEffects.Run.html#y"><span class="id" type="variable">y</span></a><br/>
+| <a name="Intro"><span class="id" type="constructor">Intro</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">E</span> <span class="id" type="var">A</span>} (<span class="id" type="var">B</span> : <span class="id" type="keyword">Type</span>) {<span class="id" type="var">c</span> : <a class="idref" href="IoEffects.C.html#t"><span class="id" type="inductive">C.t</span></a> <a class="idref" href="IoEffects.Run.html#E"><span class="id" type="variable">E</span></a> <a class="idref" href="IoEffects.Run.html#A"><span class="id" type="variable">A</span></a>} {<span class="id" type="var">x</span> : <a class="idref" href="IoEffects.Run.html#A"><span class="id" type="variable">A</span></a>}, (<a class="idref" href="IoEffects.Run.html#B"><span class="id" type="variable">B</span></a> → <a class="idref" href="IoEffects.Run.html#t"><span class="id" type="inductive">t</span></a> <a class="idref" href="IoEffects.Run.html#c"><span class="id" type="variable">c</span></a> <a class="idref" href="IoEffects.Run.html#x"><span class="id" type="variable">x</span></a>) → <a class="idref" href="IoEffects.Run.html#t"><span class="id" type="inductive">t</span></a> <a class="idref" href="IoEffects.Run.html#c"><span class="id" type="variable">c</span></a> <a class="idref" href="IoEffects.Run.html#x"><span class="id" type="variable">x</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
