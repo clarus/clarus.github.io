@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>ListPlus.List</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library ListPlus.List</h1>
+
+<div class="code">
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#"><span class="id" type="library">Coq.Lists.List</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Import</span> <span class="id" type="var">ListNotations</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <a name="repeat_aux"><span class="id" type="definition">repeat_aux</span></a> {<span class="id" type="var">A</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">x</span> : <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a>) (<span class="id" type="var">n</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" type="inductive">nat</span></a>) (<span class="id" type="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="ListPlus.List.html#n"><span class="id" type="variable">n</span></a> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#O"><span class="id" type="constructor">O</span></a> ⇒ <a class="idref" href="ListPlus.List.html#l"><span class="id" type="variable">l</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#S"><span class="id" type="constructor">S</span></a> <span class="id" type="var">n</span> ⇒ <a class="idref" href="ListPlus.List.html#repeat_aux"><span class="id" type="definition">repeat_aux</span></a> <a class="idref" href="ListPlus.List.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="ListPlus.List.html#n"><span class="id" type="variable">n</span></a> (<a class="idref" href="ListPlus.List.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:list_scope:x_'::'_x"><span class="id" type="notation">::</span></a> <a class="idref" href="ListPlus.List.html#l"><span class="id" type="variable">l</span></a>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Make a list of `n` elements `x`. 
+</div>
+<div class="code">
+<span class="id" type="keyword">Definition</span> <a name="repeat"><span class="id" type="definition">repeat</span></a> {<span class="id" type="var">A</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">x</span> : <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a>) (<span class="id" type="var">n</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" type="inductive">nat</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="ListPlus.List.html#repeat_aux"><span class="id" type="definition">repeat_aux</span></a> <a class="idref" href="ListPlus.List.html#x"><span class="id" type="variable">x</span></a> <a class="idref" href="ListPlus.List.html#n"><span class="id" type="variable">n</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#ListNotations.:list_scope:'['_']'"><span class="id" type="notation">[]</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Remove the elements `None` of a list. 
+</div>
+<div class="code">
+<span class="id" type="keyword">Fixpoint</span> <a name="remove_nones"><span class="id" type="definition">remove_nones</span></a> {<span class="id" type="var">A</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#option"><span class="id" type="inductive">option</span></a> <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a>)) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="ListPlus.List.html#l"><span class="id" type="variable">l</span></a> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#ListNotations.:list_scope:'['_']'"><span class="id" type="notation">[]</span></a> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#ListNotations.:list_scope:'['_']'"><span class="id" type="notation">[]</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#None"><span class="id" type="constructor">None</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:list_scope:x_'::'_x"><span class="id" type="notation">::</span></a> <span class="id" type="var">l</span> ⇒ <a class="idref" href="ListPlus.List.html#remove_nones"><span class="id" type="definition">remove_nones</span></a> <a class="idref" href="ListPlus.List.html#l"><span class="id" type="variable">l</span></a><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" type="constructor">Some</span></a> <span class="id" type="var">x</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:list_scope:x_'::'_x"><span class="id" type="notation">::</span></a> <span class="id" type="var">l</span> ⇒ <span class="id" type="var">x</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:list_scope:x_'::'_x"><span class="id" type="notation">::</span></a> <a class="idref" href="ListPlus.List.html#remove_nones"><span class="id" type="definition">remove_nones</span></a> <a class="idref" href="ListPlus.List.html#l"><span class="id" type="variable">l</span></a><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Do a map removing the `None` results of `f`. 
+</div>
+<div class="code">
+<span class="id" type="keyword">Fixpoint</span> <a name="map_filter"><span class="id" type="definition">map_filter</span></a> {<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">f</span> : <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#option"><span class="id" type="inductive">option</span></a> <a class="idref" href="ListPlus.List.html#B"><span class="id" type="variable">B</span></a>) (<span class="id" type="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="ListPlus.List.html#A"><span class="id" type="variable">A</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="ListPlus.List.html#B"><span class="id" type="variable">B</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="ListPlus.List.html#l"><span class="id" type="variable">l</span></a> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#ListNotations.:list_scope:'['_']'"><span class="id" type="notation">[]</span></a> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#ListNotations.:list_scope:'['_']'"><span class="id" type="notation">[]</span></a><br/>
+&nbsp;&nbsp;| <span class="id" type="var">x</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:list_scope:x_'::'_x"><span class="id" type="notation">::</span></a> <span class="id" type="var">l</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="ListPlus.List.html#f"><span class="id" type="variable">f</span></a> <span class="id" type="var">x</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#None"><span class="id" type="constructor">None</span></a> ⇒ <a class="idref" href="ListPlus.List.html#map_filter"><span class="id" type="definition">map_filter</span></a> <a class="idref" href="ListPlus.List.html#f"><span class="id" type="variable">f</span></a> <a class="idref" href="ListPlus.List.html#l"><span class="id" type="variable">l</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" type="constructor">Some</span></a> <span class="id" type="var">y</span> ⇒ <span class="id" type="var">y</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:list_scope:x_'::'_x"><span class="id" type="notation">::</span></a> <a class="idref" href="ListPlus.List.html#map_filter"><span class="id" type="definition">map_filter</span></a> <a class="idref" href="ListPlus.List.html#f"><span class="id" type="variable">f</span></a> <a class="idref" href="ListPlus.List.html#l"><span class="id" type="variable">l</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
