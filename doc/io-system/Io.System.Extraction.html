@@ -26,9 +26,9 @@ Extraction to OCaml. New primitives are defined in `extraction/utils.ml`.
 </div>
 <div class="code">
 <span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#"><span class="id" type="library">Coq.Lists.List</span></a>.<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.PArith.PArith.html#"><span class="id" type="library">Coq.PArith.PArith</span></a>.<br/>
 <span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.ZArith.ZArith.html#"><span class="id" type="library">Coq.ZArith.ZArith</span></a>.<br/>
 <span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.extraction.ExtrOcamlBasic.html#"><span class="id" type="library">ExtrOcamlBasic</span></a>.<br/>
-<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.extraction.ExtrOcamlBigIntConv.html#"><span class="id" type="library">ExtrOcamlBigIntConv</span></a>.<br/>
 <span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.extraction.ExtrOcamlString.html#"><span class="id" type="library">ExtrOcamlString</span></a>.<br/>
 <span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <span class="id" type="library">ErrorHandlers.All</span>.<br/>
 <span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <span class="id" type="library">FunctionNinjas.All</span>.<br/>
@@ -39,6 +39,42 @@ Extraction to OCaml. New primitives are defined in `extraction/utils.ml`.
 <br/>
 <span class="id" type="keyword">Import</span> <span class="id" type="var">ListNotations</span>.<br/>
 <span class="id" type="keyword">Local</span>&nbsp;<span class="id" type="keyword">Open</span> <span class="id" type="keyword">Scope</span> <span class="id" type="var">type</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Interface to the Big_int library. 
+</div>
+<div class="code">
+<span class="id" type="keyword">Module</span> <a name="BigInt"><span class="id" type="module">BigInt</span></a>.<br/>
+</div>
+
+<div class="doc">
+The OCaml's `big_int` type. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="BigInt.t"><span class="id" type="axiom">t</span></a> : <span class="id" type="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="var">t</span> ⇒ "Big_int.big_int".<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="BigInt.to_Z_aux"><span class="id" type="axiom">to_Z_aux</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">Z</span> <span class="id" type="var">positive</span> : <span class="id" type="keyword">Type</span>},<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#BigInt.t"><span class="id" type="axiom">t</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Z"><span class="id" type="variable">Z</span></a> → (<a class="idref" href="Io.System.Extraction.html#positive"><span class="id" type="variable">positive</span></a> → <a class="idref" href="Io.System.Extraction.html#Z"><span class="id" type="variable">Z</span></a>) → (<a class="idref" href="Io.System.Extraction.html#positive"><span class="id" type="variable">positive</span></a> → <a class="idref" href="Io.System.Extraction.html#Z"><span class="id" type="variable">Z</span></a>) →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#positive"><span class="id" type="variable">positive</span></a> → (<a class="idref" href="Io.System.Extraction.html#positive"><span class="id" type="variable">positive</span></a> → <a class="idref" href="Io.System.Extraction.html#positive"><span class="id" type="variable">positive</span></a>) → (<a class="idref" href="Io.System.Extraction.html#positive"><span class="id" type="variable">positive</span></a> → <a class="idref" href="Io.System.Extraction.html#positive"><span class="id" type="variable">positive</span></a>) →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Z"><span class="id" type="variable">Z</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="var">to_Z_aux</span> ⇒ "IoSystem.Big.to_Z_aux".<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Export to a `Z`. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="BigInt.to_Z"><span class="id" type="definition">to_Z</span></a> (<span class="id" type="var">big</span> : <a class="idref" href="Io.System.Extraction.html#BigInt.t"><span class="id" type="axiom">t</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" type="inductive">Z</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#BigInt.to_Z_aux"><span class="id" type="axiom">to_Z_aux</span></a> <a class="idref" href="Io.System.Extraction.html#big"><span class="id" type="variable">big</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Numbers.BinNums.html#Z0"><span class="id" type="constructor">Z0</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Numbers.BinNums.html#Zpos"><span class="id" type="constructor">Zpos</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Numbers.BinNums.html#Zneg"><span class="id" type="constructor">Zneg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Numbers.BinNums.html#xH"><span class="id" type="constructor">xH</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Numbers.BinNums.html#xO"><span class="id" type="constructor">xO</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Numbers.BinNums.html#xI"><span class="id" type="constructor">xI</span></a>.<br/>
+<span class="id" type="keyword">End</span> <a class="idref" href="Io.System.Extraction.html#BigInt"><span class="id" type="module">BigInt</span></a>.<br/>
 
 <br/>
 </div>
@@ -82,27 +118,39 @@ Import an OCaml string.
 </div>
 
 <div class="doc">
-Unbounded integers. 
+Interface to the sum type. 
 </div>
 <div class="code">
-<span class="id" type="keyword">Module</span> <a name="BigInt"><span class="id" type="module">BigInt</span></a>.<br/>
-</div>
+<span class="id" type="keyword">Module</span> <a name="Sum"><span class="id" type="module">Sum</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="Sum.t"><span class="id" type="axiom">t</span></a> : <span class="id" type="keyword">Type</span> → <span class="id" type="keyword">Type</span> → <span class="id" type="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="var">t</span> "'a" "'b" ⇒ "('a, 'b) IoSystem.Sum.t".<br/>
 
-<div class="doc">
-The OCaml's `bigint` type. 
-</div>
-<div class="code">
-&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="BigInt.t"><span class="id" type="definition">t</span></a> : <span class="id" type="keyword">Type</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.extraction.ExtrOcamlBigIntConv.html#bigint"><span class="id" type="axiom">bigint</span></a>.<br/>
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="Sum.destruct"><span class="id" type="axiom">destruct</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">C</span> : <span class="id" type="keyword">Type</span>}, <a class="idref" href="Io.System.Extraction.html#Sum.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a> → (<a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> → <a class="idref" href="Io.System.Extraction.html#C"><span class="id" type="variable">C</span></a>) → (<a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a> → <a class="idref" href="Io.System.Extraction.html#C"><span class="id" type="variable">C</span></a>) → <a class="idref" href="Io.System.Extraction.html#C"><span class="id" type="variable">C</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="tactic">destruct</span> ⇒ "IoSystem.Sum.destruct".<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="Sum.to_coq"><span class="id" type="definition">to_coq</span></a> {<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">s</span> : <a class="idref" href="Io.System.Extraction.html#Sum.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a>) : <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:type_scope:x_'+'_x"><span class="id" type="notation">+</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Sum.destruct"><span class="id" type="axiom">destruct</span></a> <a class="idref" href="Io.System.Extraction.html#s"><span class="id" type="variable">s</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#inl"><span class="id" type="constructor">inl</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#inr"><span class="id" type="constructor">inr</span></a>.<br/>
+<span class="id" type="keyword">End</span> <a class="idref" href="Io.System.Extraction.html#Sum"><span class="id" type="module">Sum</span></a>.<br/>
 
 <br/>
 </div>
 
 <div class="doc">
-Export to a `Z`. 
+Interface to the Sys library. 
 </div>
 <div class="code">
-&nbsp;&nbsp;<span class="id" type="keyword">Definition</span> <a name="BigInt.to_Z"><span class="id" type="definition">to_Z</span></a> : <a class="idref" href="Io.System.Extraction.html#BigInt.t"><span class="id" type="definition">t</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" type="inductive">Z</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.extraction.ExtrOcamlBigIntConv.html#z_of_bigint"><span class="id" type="definition">z_of_bigint</span></a>.<br/>
-<span class="id" type="keyword">End</span> <a class="idref" href="Io.System.Extraction.html#BigInt"><span class="id" type="module">BigInt</span></a>.<br/>
+<span class="id" type="keyword">Module</span> <a name="Sys"><span class="id" type="module">Sys</span></a>.<br/>
+</div>
+
+<div class="doc">
+The command line arguments of the program. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="Sys.argv"><span class="id" type="axiom">argv</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="Io.System.Extraction.html#String.t"><span class="id" type="axiom">String.t</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="var">argv</span> ⇒ "IoSystem.argv".<br/>
+<span class="id" type="keyword">End</span> <a class="idref" href="Io.System.Extraction.html#Sys"><span class="id" type="module">Sys</span></a>.<br/>
 
 <br/>
 </div>
@@ -140,6 +188,26 @@ Bind.
 <div class="code">
 &nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="Lwt.bind"><span class="id" type="axiom">bind</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Type</span>}, <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> → (<a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> → <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a>) → <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a>.<br/>
 &nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="var">bind</span> ⇒ "Lwt.bind".<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Join. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="Lwt.join"><span class="id" type="axiom">join</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Type</span>}, <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> → <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a> → <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> (<a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:type_scope:x_'*'_x"><span class="id" type="notation">×</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="var">join</span> ⇒ "IoSystem.join".<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+First. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="Lwt.first"><span class="id" type="axiom">first</span></a> : <span class="id" type="keyword">∀</span> {<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Type</span>}, <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> → <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a> → <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> (<a class="idref" href="Io.System.Extraction.html#Sum.t"><span class="id" type="axiom">Sum.t</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> <a class="idref" href="Io.System.Extraction.html#B"><span class="id" type="variable">B</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="tactic">first</span> ⇒ "IoSystem.first".<br/>
 
 <br/>
 </div>
@@ -205,6 +273,16 @@ Run a command.
 </div>
 
 <div class="doc">
+Run a command controlling the outputs. 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" type="keyword">Parameter</span> <a name="Lwt.eval"><span class="id" type="axiom">eval</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <a class="idref" href="Io.System.Extraction.html#String.t"><span class="id" type="axiom">String.t</span></a> → <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">t</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#option"><span class="id" type="inductive">option</span></a> (<a class="idref" href="Io.System.Extraction.html#BigInt.t"><span class="id" type="axiom">BigInt.t</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:type_scope:x_'*'_x"><span class="id" type="notation">×</span></a> <a class="idref" href="Io.System.Extraction.html#String.t"><span class="id" type="axiom">String.t</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:type_scope:x_'*'_x"><span class="id" type="notation">×</span></a> <a class="idref" href="Io.System.Extraction.html#String.t"><span class="id" type="axiom">String.t</span></a>)).<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">Extract</span> <span class="id" type="var">Constant</span> <span class="id" type="tactic">eval</span> ⇒ "IoSystem.eval".<br/>
+
+<br/>
+</div>
+
+<div class="doc">
 Print a message on the standard output. 
 </div>
 <div class="code">
@@ -229,9 +307,9 @@ Read a line on the standard input.
 Evaluate a command using Lwt. 
 </div>
 <div class="code">
-<span class="id" type="keyword">Definition</span> <a name="eval_command"><span class="id" type="definition">eval_command</span></a> (<span class="id" type="var">c</span> : <span class="id" type="projection">Effects.command</span> <a class="idref" href="Io.System.System.html#effects"><span class="id" type="definition">System.effects</span></a>)<br/>
-&nbsp;&nbsp;: <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">Lwt.t</span></a> (<span class="id" type="projection">Effects.answer</span> <a class="idref" href="Io.System.System.html#effects"><span class="id" type="definition">System.effects</span></a> <a class="idref" href="Io.System.Extraction.html#c"><span class="id" type="variable">c</span></a>) :=<br/>
-&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="Io.System.Extraction.html#c"><span class="id" type="variable">c</span></a> <span class="id" type="keyword">return</span> (<a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">Lwt.t</span></a> (<span class="id" type="projection">Effects.answer</span> <a class="idref" href="Io.System.System.html#effects"><span class="id" type="definition">System.effects</span></a> <a class="idref" href="Io.System.Extraction.html#c"><span class="id" type="variable">c</span></a>)) <span class="id" type="keyword">with</span><br/>
+<span class="id" type="keyword">Definition</span> <a name="eval_command"><span class="id" type="definition">eval_command</span></a> (<span class="id" type="var">c</span> : <span class="id" type="projection">Effect.command</span> <a class="idref" href="Io.System.System.html#effect"><span class="id" type="definition">System.effect</span></a>)<br/>
+&nbsp;&nbsp;: <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">Lwt.t</span></a> (<span class="id" type="projection">Effect.answer</span> <a class="idref" href="Io.System.System.html#effect"><span class="id" type="definition">System.effect</span></a> <a class="idref" href="Io.System.Extraction.html#c"><span class="id" type="variable">c</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="Io.System.Extraction.html#c"><span class="id" type="variable">c</span></a> <span class="id" type="keyword">return</span> (<a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">Lwt.t</span></a> (<span class="id" type="projection">Effect.answer</span> <a class="idref" href="Io.System.System.html#effect"><span class="id" type="definition">System.effect</span></a> <a class="idref" href="Io.System.Extraction.html#c"><span class="id" type="variable">c</span></a>)) <span class="id" type="keyword">with</span><br/>
 &nbsp;&nbsp;| <a class="idref" href="Io.System.System.html#ListFiles"><span class="id" type="constructor">System.ListFiles</span></a> <span class="id" type="var">folder</span> ⇒<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.bind"><span class="id" type="axiom">Lwt.bind</span></a> (<a class="idref" href="Io.System.Extraction.html#Lwt.list_files"><span class="id" type="axiom">Lwt.list_files</span></a> <span class="id" type="notation">@@</span> <a class="idref" href="Io.System.Extraction.html#String.of_lstring"><span class="id" type="axiom">String.of_lstring</span></a> <span class="id" type="var">folder</span>) (<span class="id" type="keyword">fun</span> <span class="id" type="var">files</span> ⇒<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.ret"><span class="id" type="axiom">Lwt.ret</span></a> <span class="id" type="notation">@@</span> <span class="id" type="definition">Option.bind</span> <a class="idref" href="Io.System.Extraction.html#files"><span class="id" type="variable">files</span></a> (<span class="id" type="keyword">fun</span> <span class="id" type="var">files</span> ⇒<br/>
@@ -246,6 +324,14 @@ Evaluate a command using Lwt.
 &nbsp;&nbsp;| <a class="idref" href="Io.System.System.html#DeleteFile"><span class="id" type="constructor">System.DeleteFile</span></a> <span class="id" type="var">file_name</span> ⇒<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.delete_file"><span class="id" type="axiom">Lwt.delete_file</span></a> <span class="id" type="notation">@@</span> <a class="idref" href="Io.System.Extraction.html#String.of_lstring"><span class="id" type="axiom">String.of_lstring</span></a> <span class="id" type="var">file_name</span><br/>
 &nbsp;&nbsp;| <a class="idref" href="Io.System.System.html#System"><span class="id" type="constructor">System.System</span></a> <span class="id" type="var">command</span> ⇒ <a class="idref" href="Io.System.Extraction.html#Lwt.system"><span class="id" type="axiom">Lwt.system</span></a> (<a class="idref" href="Io.System.Extraction.html#String.of_lstring"><span class="id" type="axiom">String.of_lstring</span></a> <span class="id" type="var">command</span>)<br/>
+&nbsp;&nbsp;| <a class="idref" href="Io.System.System.html#Eval"><span class="id" type="constructor">System.Eval</span></a> <span class="id" type="var">command</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">let</span> <span class="id" type="var">command</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#map"><span class="id" type="definition">List.map</span></a> <a class="idref" href="Io.System.Extraction.html#String.of_lstring"><span class="id" type="axiom">String.of_lstring</span></a> <span class="id" type="var">command</span> <span class="id" type="keyword">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.bind"><span class="id" type="axiom">Lwt.bind</span></a> (<a class="idref" href="Io.System.Extraction.html#Lwt.eval"><span class="id" type="axiom">Lwt.eval</span></a> <a class="idref" href="Io.System.Extraction.html#command"><span class="id" type="variable">command</span></a>) (<span class="id" type="keyword">fun</span> <span class="id" type="var">result</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.ret"><span class="id" type="axiom">Lwt.ret</span></a> (<a class="idref" href="Io.System.Extraction.html#result"><span class="id" type="variable">result</span></a> <span class="id" type="notation">|&gt;</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#option_map"><span class="id" type="definition">option_map</span></a> (<span class="id" type="keyword">fun</span> <span class="id" type="var">result</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="Io.System.Extraction.html#result"><span class="id" type="variable">result</span></a> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:core_scope:'('_x_','_x_','_'..'_','_x_')'"><span class="id" type="notation">(</span></a><span class="id" type="var">status</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:core_scope:'('_x_','_x_','_'..'_','_x_')'"><span class="id" type="notation">,</span></a> <span class="id" type="var">output</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:core_scope:'('_x_','_x_','_'..'_','_x_')'"><span class="id" type="notation">,</span></a> <span class="id" type="var">err</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:core_scope:'('_x_','_x_','_'..'_','_x_')'"><span class="id" type="notation">)</span></a> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:core_scope:'('_x_','_x_','_'..'_','_x_')'"><span class="id" type="notation">(</span></a><a class="idref" href="Io.System.Extraction.html#BigInt.to_Z"><span class="id" type="definition">BigInt.to_Z</span></a> <span class="id" type="var">status</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:core_scope:'('_x_','_x_','_'..'_','_x_')'"><span class="id" type="notation">,</span></a> <a class="idref" href="Io.System.Extraction.html#String.to_lstring"><span class="id" type="axiom">String.to_lstring</span></a> <span class="id" type="var">output</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:core_scope:'('_x_','_x_','_'..'_','_x_')'"><span class="id" type="notation">,</span></a> <a class="idref" href="Io.System.Extraction.html#String.to_lstring"><span class="id" type="axiom">String.to_lstring</span></a> <span class="id" type="var">err</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#:core_scope:'('_x_','_x_','_'..'_','_x_')'"><span class="id" type="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>)))<br/>
 &nbsp;&nbsp;| <a class="idref" href="Io.System.System.html#Print"><span class="id" type="constructor">System.Print</span></a> <span class="id" type="var">message</span> ⇒<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">let</span> <span class="id" type="var">message</span> := <a class="idref" href="Io.System.Extraction.html#String.of_lstring"><span class="id" type="axiom">String.of_lstring</span></a> <span class="id" type="var">message</span> <span class="id" type="keyword">in</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.print"><span class="id" type="axiom">Lwt.print</span></a> <a class="idref" href="Io.System.Extraction.html#message"><span class="id" type="variable">message</span></a><br/>
@@ -261,12 +347,27 @@ Evaluate a command using Lwt.
 Evaluate an expression using Lwt. 
 </div>
 <div class="code">
-<span class="id" type="keyword">Fixpoint</span> <a name="eval"><span class="id" type="definition">eval</span></a> {<span class="id" type="var">A</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">x</span> : <span class="id" type="inductive">C.t</span> <a class="idref" href="Io.System.System.html#effects"><span class="id" type="definition">System.effects</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a>) : <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">Lwt.t</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a> :=<br/>
-&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="Io.System.Extraction.html#x"><span class="id" type="variable">x</span></a> <span class="id" type="keyword">with</span><br/>
-&nbsp;&nbsp;| <span class="id" type="constructor">C.Ret</span> <span class="id" type="var">_</span> <span class="id" type="var">x</span> ⇒ <a class="idref" href="Io.System.Extraction.html#Lwt.ret"><span class="id" type="axiom">Lwt.ret</span></a> <a class="idref" href="Io.System.Extraction.html#x"><span class="id" type="variable">x</span></a><br/>
-&nbsp;&nbsp;| <span class="id" type="constructor">C.Call</span> <span class="id" type="var">command</span> ⇒ <a class="idref" href="Io.System.Extraction.html#eval_command"><span class="id" type="definition">eval_command</span></a> <span class="id" type="var">command</span><br/>
-&nbsp;&nbsp;| <span class="id" type="constructor">C.Let</span> <span class="id" type="var">_</span> <span class="id" type="var">_</span> <span class="id" type="var">x</span> <span class="id" type="var">f</span> ⇒ <a class="idref" href="Io.System.Extraction.html#Lwt.bind"><span class="id" type="axiom">Lwt.bind</span></a> (<a class="idref" href="Io.System.Extraction.html#eval"><span class="id" type="definition">eval</span></a> <a class="idref" href="Io.System.Extraction.html#x"><span class="id" type="variable">x</span></a>) (<span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> ⇒ <a class="idref" href="Io.System.Extraction.html#eval"><span class="id" type="definition">eval</span></a> (<span class="id" type="var">f</span> <a class="idref" href="Io.System.Extraction.html#x"><span class="id" type="variable">x</span></a>))<br/>
-&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+<span class="id" type="keyword">Fixpoint</span> <a name="eval"><span class="id" type="definition">eval</span></a> {<span class="id" type="var">A</span> : <span class="id" type="keyword">Type</span>} (<span class="id" type="var">x</span> : <span class="id" type="inductive">C.t</span> <a class="idref" href="Io.System.System.html#effect"><span class="id" type="definition">System.effect</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a>) : <a class="idref" href="Io.System.Extraction.html#Lwt.t"><span class="id" type="axiom">Lwt.t</span></a> <a class="idref" href="Io.System.Extraction.html#A"><span class="id" type="variable">A</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">destruct</span> <span class="id" type="var">x</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">A</span> <span class="id" type="var">x</span> | <span class="id" type="var">command</span> | <span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">x</span> <span class="id" type="var">f</span> | <span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span> | <span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span>].<br/>
+&nbsp;&nbsp;- <span class="id" type="tactic">exact</span> (<a class="idref" href="Io.System.Extraction.html#Lwt.ret"><span class="id" type="axiom">Lwt.ret</span></a> <span class="id" type="var">x</span>).<br/>
+&nbsp;&nbsp;- <span class="id" type="tactic">exact</span> (<a class="idref" href="Io.System.Extraction.html#eval_command"><span class="id" type="definition">eval_command</span></a> <span class="id" type="var">command</span>).<br/>
+&nbsp;&nbsp;- <span class="id" type="tactic">exact</span> (<a class="idref" href="Io.System.Extraction.html#Lwt.bind"><span class="id" type="axiom">Lwt.bind</span></a> (<span class="id" type="tactic">eval</span> <span class="id" type="var">_</span> <span class="id" type="var">x</span>) (<span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> ⇒ <span class="id" type="tactic">eval</span> <span class="id" type="var">_</span> (<span class="id" type="var">f</span> <a class="idref" href="Io.System.Extraction.html#x"><span class="id" type="variable">x</span></a>))).<br/>
+&nbsp;&nbsp;- <span class="id" type="tactic">exact</span> (<a class="idref" href="Io.System.Extraction.html#Lwt.join"><span class="id" type="axiom">Lwt.join</span></a> (<span class="id" type="tactic">eval</span> <span class="id" type="var">_</span> <span class="id" type="var">x</span>) (<span class="id" type="tactic">eval</span> <span class="id" type="var">_</span> <span class="id" type="var">y</span>)).<br/>
+&nbsp;&nbsp;- <span class="id" type="tactic">exact</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.bind"><span class="id" type="axiom">Lwt.bind</span></a> (<a class="idref" href="Io.System.Extraction.html#Lwt.first"><span class="id" type="axiom">Lwt.first</span></a> (<span class="id" type="tactic">eval</span> <span class="id" type="var">_</span> <span class="id" type="var">x</span>) (<span class="id" type="tactic">eval</span> <span class="id" type="var">_</span> <span class="id" type="var">y</span>)) (<span class="id" type="keyword">fun</span> <span class="id" type="var">s</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.ret"><span class="id" type="axiom">Lwt.ret</span></a> <span class="id" type="notation">@@</span> <a class="idref" href="Io.System.Extraction.html#Sum.to_coq"><span class="id" type="definition">Sum.to_coq</span></a> <a class="idref" href="Io.System.Extraction.html#s"><span class="id" type="variable">s</span></a>)).<br/>
+<span class="id" type="keyword">Defined</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Run the main function. 
+</div>
+<div class="code">
+<span class="id" type="keyword">Definition</span> <a name="run"><span class="id" type="definition">run</span></a> (<span class="id" type="var">main</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#list"><span class="id" type="inductive">list</span></a> <span class="id" type="definition">LString.t</span> → <span class="id" type="inductive">C.t</span> <a class="idref" href="Io.System.System.html#effect"><span class="id" type="definition">System.effect</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" type="inductive">unit</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" type="inductive">unit</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">let</span> <span class="id" type="var">argv</span> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl5/stdlib/Coq.Lists.List.html#map"><span class="id" type="definition">List.map</span></a> <a class="idref" href="Io.System.Extraction.html#String.to_lstring"><span class="id" type="axiom">String.to_lstring</span></a> <a class="idref" href="Io.System.Extraction.html#Sys.argv"><span class="id" type="axiom">Sys.argv</span></a> <span class="id" type="keyword">in</span><br/>
+&nbsp;&nbsp;<a class="idref" href="Io.System.Extraction.html#Lwt.run"><span class="id" type="axiom">Lwt.run</span></a> (<a class="idref" href="Io.System.Extraction.html#eval"><span class="id" type="definition">Extraction.eval</span></a> (<a class="idref" href="Io.System.Extraction.html#main"><span class="id" type="variable">main</span></a> <a class="idref" href="Io.System.Extraction.html#argv"><span class="id" type="variable">argv</span></a>)).<br/>
 </div>
 </div>
 
