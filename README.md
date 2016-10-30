@@ -1,4 +1,4 @@
-clarus.github.io
-================
+# clarus.github.io
+> http://clarus.github.io/
 
 GitHub pages.
