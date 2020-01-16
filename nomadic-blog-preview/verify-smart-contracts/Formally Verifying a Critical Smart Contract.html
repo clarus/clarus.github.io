@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/BlogPosting"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/BlogPosting"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" class="no-js lt-ie9" prefix="og: http://ogp.me/ns#" itemscope itemtype="http://schema.org/BlogPosting"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js uk-notouch" prefix="og: http://ogp.me/ns#" itemscope="" itemtype="http://schema.org/BlogPosting" lang="en"><!--<![endif]--><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Formally Verifying a Critical Smart Contract</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="We present the formal verification of the Spending Limit Contract, a critical component of the Cortez wallet.">
+<link rel="shortcut icon" href="http://localhost:8000/" type="">
+<meta name="author" content="">
+<meta name="copyright" content="">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@">
+<meta property="og:site_name" content="Nomadic Labs">
+
+<meta property="og:title" content="Formally verifying a critical smart contract">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:8000/formally-verifying-a-critical-smart-contract.html">
+<meta name="twitter:title" content="Formally verifying a critical smart contract">
+<meta name="twitter:url" content="http://localhost:8000/formally-verifying-a-critical-smart-contract.html">
+<meta itemprop="url" content="http://localhost:8000/formally-verifying-a-critical-smart-contract.html">
+<meta property="og:description" content="We present the formal verification of the Spending Limit Contract, a critical component of the Cortez wallet.">
+<meta name="twitter:description" content="We present the formal verification of the Spending Limit Contract, a critical component of the Cortez wallet.">
+<meta property="og:article:published_time" content="2019-12-05">
+<meta property="og:article:author" content="Nomadic Labs">
+
+<link href="http://localhost:8000/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Nomadic Labs ATOM Feed">
+<link href="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/css.css" rel="stylesheet" type="text/css">
+<link href="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/css_002.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/uikit.css">
+<link rel="stylesheet" href="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/search.css">
+<link rel="stylesheet" href="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/tipuesearch.css">
+<link rel="stylesheet" href="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/solarized.css">
+<link rel="stylesheet" href="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/main.css">
+
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/html5shiv.js"></script>
+</head>
+<body>
+<!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+<header class=" mg-header uk-navbar uk-navbar-attached">
+
+    <div class="uk-container uk-container-center">
+
+        <a class="mg-brand uk-navbar-brand uk-hidden-small" href="https://www.nomadic-labs.com/">Nomadic Labs</a>
+        <div class="mg-tagline uk-navbar-content uk-hidden-small"></div>
+        <a class="uk-navbar-toggle uk-visible-small" href="#mg-offcanvas" data-uk-offcanvas=""></a>
+        <a class="mg-brand uk-navbar-brand uk-navbar-center uk-visible-small" href="http://localhost:8000/">Nomadic Labs</a>
+
+    </div>
+</header>
+
+<main class="mg-main">
+
+<div class="uk-container uk-container-center" style="max-width:1000px;">
+
+    <div class="uk-grid" data-uk-grid-margin="">
+
+<div class="mg-container-social uk-width-medium-1-10 uk-hidden-small" style="height: 9080px;">
+
+
+</div>
+
+<div class="uk-width-medium-7-10">
+
+    <article class="uk-article">
+        <h1 class="uk-heading-large uk-article-title" itemprop="name">Formally Verifying a Critical Smart Contract</h1>
+        <p class="uk-article-meta"><time datetime="2019-12-05" itemprop="datePublished">jeu. 05 décembre 2019</time> in <a href="http://localhost:8000/category/in-depth.html">in-depth</a></p>
+
+
+        <p class="uk-article-lead" itemprop="description">We present the formal verification of the Spending Limit Contract, a critical component of the Cortez wallet.</p>
+        <section itemprop="articleBody"><p style="margin: 40px 0" align="center">
+  <img style="margin-right: 60px" src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/cortez.png">
+  <img src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/mi-cho-coq.png">
+</p>
+
+<p>One of the main goals of <a href="https://nomadic-labs.com/">Nomadic Labs</a> is
+the development and applications of
+<a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a> in the
+domain of distributed software, blockchains and smart contracts.
+In particular for the <a href="https://tezos.com/">Tezos</a> blockchain, for which we
+also develop the Cortez smartphone wallet
+(<a href="https://gitlab.com/nomadic-labs/cortez-android">Android</a>,
+<a href="https://gitlab.com/nomadic-labs/cortez-ios">iPhone</a>).
+This wallet helps Tezos users manage their account and funds in a safe and secure manner. </p>
+<p>How can the user be assured that this critical
+software has been correctly implemented?
+In this blog post, we detail how we have applied formal methods to 
+verify the safety of a core component of the Cortez safety layer: its 
+smart contract -- <strong>the Spending Limit Contract</strong>.</p>
+<h2 id="the-spending-limit-contract">The Spending Limit Contract</h2>
+<p>The <strong>Spending Limit Contract</strong> (SLC) is a critical component of the safety layer of the
+Cortez wallet,
+<a href="http://localhost:8000/cortez-security-by-using-the-spending-limit-contract.html">as discussed earlier on this blog</a>.
+This contract ensures that only a limited amount of funds can be spent
+within a given time window. This adds a layer of security to the
+user's account in the unfortunate event that their device is
+stolen.
+The contract accounts user spending in a queue of past transfers.  This
+queue is implemented using a pair of lists, a technique for
+optimizing  gas consumption<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>. However, this implementation increases the complexity
+of the contract's logic significantly.</p>
+<p>The Spending Limit Contract specifies two roles: an
+<em>administrator</em> and a <em>user</em>. They are identified by their respective
+<code>key_hash</code>, and their calls to the contract must be authentified through a
+cryptographic signature using this <code>key_hash</code>.</p>
+<p>Historically, the contract used <em>authentication by caller</em>. That is,
+calls to protected entrypoint would be rejected if the caller's
+address did not correspond to that of the appropriate role. However,
+this approach required the origination of two keys when deploying the
+contract, as well as another origination if either of the key should
+be changed.  As origination is costly, the current version of SLC has
+passed to <em>authentication by signature</em>. In this mode, the keys for
+signing are not required to be originated. Additionally, the same
+address can be used to call both administrator and user entrypoints,
+even if their signing keys change.</p>
+<p>The administrator has full control over the contract through the
+<code>administer</code> entrypoint.  First, they can reset its storage. Second,
+they can pass it a <code>lambda</code> that produces a list of operations when
+executed, that the contract then returns. For example, the first
+feature can be used to change the identity of the user or the
+administrator, or to modify the time window and the threshold. The
+second feature can be used to remove an arbitrary amount of tokens from the account.</p>
+<p>In earlier version of the contract, the administrator was limited to
+resetting the storage. Consequently, to perform a transfer larger than
+the limit, the administrator would have to perform three calls: one to
+raise the limit, a second to perform the transfer, and a third to
+restore the limit. By letting the administrator pass a lambda, the
+contract is both more flexible and less costly to use.</p>
+<p>On the other hand, the manipulations of the user, passing through the
+<code>transfer</code> entrypoint, is subject to the restrictions of the time
+window and the threshold. The user supplies a list of
+transfers. The smart contract verifies that the total sum of these
+transfers, added to any previous transfers in the time window,
+does not exceed the threshold, in which case they are executed.
+Historically, the contract allowed only one transfer per call to
+<code>transfer</code>. Hence the current version allows the user to pass a list
+of transfers.  This reduces the cost of performing multiple
+transfers.</p>
+<p>The contract is composed of the <code>administer</code> and <code>transfer</code>
+entrypoints, along with a simple unauthenticated entrypoint <code>receive</code>
+used to receive funds. The actual contract is hand-written in
+Michelson, but for a legible illustration, we give its pseudo-code in
+<a href="https://ligolang.org/">CameLIGO</a>. Consequently, the main function of
+the contract dispatches between the entrypoints with their respective
+parameters:</p>
+<div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">param</span> <span class="o">=</span>
+  <span class="nc">Receive</span> <span class="k">of</span> <span class="kt">unit</span>
+<span class="o">|</span> <span class="nc">Administer</span> <span class="k">of</span> <span class="n">administer_param</span>
+<span class="o">|</span> <span class="nc">Transfer</span> <span class="k">of</span> <span class="n">transfer_param</span>
+
+<span class="k">let</span> <span class="n">main</span> <span class="o">(</span><span class="n">param</span><span class="o">,</span> <span class="n">s</span> <span class="o">:</span> <span class="n">param</span> <span class="o">*</span> <span class="n">storage</span><span class="o">)</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">param</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Receive</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">receive</span> <span class="o">(</span><span class="n">p</span><span class="o">,</span> <span class="n">s</span><span class="o">)</span>
+  <span class="o">|</span> <span class="nc">Administer</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">administer</span> <span class="o">(</span><span class="n">p</span><span class="o">,</span> <span class="n">s</span><span class="o">)</span>
+  <span class="o">|</span> <span class="nc">Transfer</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">transfer</span> <span class="o">(</span><span class="n">p</span><span class="o">,</span> <span class="n">s</span><span class="o">)</span>
+</pre></div>
+
+
+<p>The full CameLIGO version, including the definition of <code>administrate_param</code> and <code>transfer_param</code>, can be found
+<a href="http://localhost:8000/files/slc-verif/SLC.mligo">here</a>. We now give an informal
+specification of the desired behavior of each entrypoint.</p>
+<h3 id="administer">Administer</h3>
+<div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">change_storage</span> <span class="o">(</span><span class="n">csp</span> <span class="o">,</span> <span class="n">sto</span> <span class="o">:</span> <span class="n">change_storage_param</span> <span class="o">*</span> <span class="n">storage</span><span class="o">)</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span> <span class="o">*</span> <span class="n">storage</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="n">key</span> <span class="o">=</span> <span class="n">csp</span><span class="o">.</span><span class="mi">0</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">csp</span><span class="o">.</span><span class="mi">1</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">new_sto</span> <span class="o">=</span> <span class="n">csp</span><span class="o">.</span><span class="mi">2</span> <span class="k">in</span>
+  <span class="k">if</span> <span class="nn">Crypto</span><span class="p">.</span><span class="n">hash_key</span> <span class="n">key</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">key_administrator</span>
+     <span class="o">&amp;&amp;</span> <span class="nn">Crypto</span><span class="p">.</span><span class="n">check</span> <span class="n">key</span> <span class="n">sign</span> <span class="o">(</span><span class="nn">Bytes</span><span class="p">.</span><span class="n">pack</span> <span class="o">(</span><span class="n">new_sto</span><span class="o">,</span><span class="n">sto</span><span class="o">.</span><span class="n">salt_administrator</span><span class="o">))</span>
+  <span class="k">then</span>
+    <span class="o">((</span><span class="bp">[]</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span><span class="o">),</span> <span class="n">new_sto</span><span class="o">)</span>
+  <span class="k">else</span>
+    <span class="o">(</span><span class="n">failwith</span> <span class="s2">"Bad signature"</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span> <span class="o">*</span> <span class="n">storage</span><span class="o">)</span>
+
+<span class="k">let</span> <span class="n">run_function</span> <span class="o">(</span><span class="n">rfp</span><span class="o">,</span> <span class="n">sto</span> <span class="o">:</span> <span class="n">run_function_param</span> <span class="o">*</span> <span class="n">storage</span> <span class="o">)</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span> <span class="o">*</span> <span class="n">storage</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="n">key</span> <span class="o">=</span> <span class="n">rfp</span><span class="o">.</span><span class="mi">0</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">rfp</span><span class="o">.</span><span class="mi">1</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">admin_function</span> <span class="o">=</span> <span class="n">rfp</span><span class="o">.</span><span class="mi">2</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">kh</span> <span class="o">=</span> <span class="n">rfp</span><span class="o">.</span><span class="mi">3</span> <span class="k">in</span>
+  <span class="k">if</span> <span class="nn">Crypto</span><span class="p">.</span><span class="n">hash_key</span> <span class="n">key</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">key_administrator</span> <span class="o">&amp;&amp;</span>
+       <span class="nn">Crypto</span><span class="p">.</span><span class="n">check</span> <span class="n">key</span> <span class="n">sign</span> <span class="o">(</span><span class="nn">Bytes</span><span class="p">.</span><span class="n">pack</span> <span class="o">(</span><span class="n">admin_function</span><span class="o">,</span><span class="n">sto</span><span class="o">.</span><span class="n">salt_administrator</span><span class="o">))</span> <span class="k">then</span>
+    <span class="o">(</span><span class="n">admin_function</span> <span class="bp">()</span><span class="o">,</span>
+     <span class="o">{</span> <span class="n">key_user</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">key_user</span> <span class="o">;</span>
+       <span class="n">key_administrator</span> <span class="o">=</span> <span class="n">kh</span> <span class="o">;</span>
+       <span class="n">current_threshold</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">current_threshold</span><span class="o">;</span>
+       <span class="n">time_window</span>  <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">time_window</span><span class="o">;</span>
+       <span class="n">queue</span> <span class="o">=</span>  <span class="n">sto</span><span class="o">.</span><span class="n">queue</span> <span class="o">;</span>
+       <span class="n">salt_user</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">salt_user</span> <span class="o">;</span>
+       <span class="n">salt_administrator</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">salt_administrator</span> <span class="o">+</span> <span class="mi">1</span><span class="n">n</span><span class="o">})</span>
+  <span class="k">else</span>
+    <span class="o">(</span><span class="n">failwith</span> <span class="s2">"Bad signature"</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span> <span class="o">*</span> <span class="n">storage</span><span class="o">)</span>
+
+<span class="k">let</span> <span class="n">administer</span> <span class="o">(</span><span class="n">p</span><span class="o">,</span> <span class="n">s</span> <span class="o">:</span> <span class="n">administer_param</span> <span class="o">*</span> <span class="n">storage</span><span class="o">)</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">p</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Change_storage</span> <span class="n">cs</span> <span class="o">-&gt;</span> <span class="n">change_storage</span> <span class="o">(</span><span class="n">cs</span><span class="o">,</span> <span class="n">s</span><span class="o">)</span>
+  <span class="o">|</span> <span class="nc">Run_function</span> <span class="n">mt</span> <span class="o">-&gt;</span> <span class="n">run_function</span> <span class="o">(</span><span class="n">mt</span><span class="o">,</span> <span class="n">s</span><span class="o">)</span>
+</pre></div>
+
+
+<p>The <code>administer</code> entrypoint, illustrated by the above CameLIGO code,
+receives a public key, a payload and a signature of this payload. It
+verifies that the hash of this key equals the stored key hash
+of the administrator. It also verifies that the signature of the
+payload is valid and created by the administrator. If either of these
+conditions are unfulfilled, the contract fails.</p>
+<p>Then, depending on the payload, it either updates the storage of the
+context, or executes the received <code>lambda</code> and returns the obtained
+list of operations.</p>
+<h3 id="transfer">Transfer</h3>
+<div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">reverse</span> <span class="o">(</span><span class="n">l</span> <span class="o">:</span> <span class="o">(</span><span class="n">timestamp</span> <span class="o">*</span> <span class="n">tez</span><span class="o">)</span> <span class="kt">list</span><span class="o">)</span> <span class="o">:</span> <span class="o">(</span><span class="n">timestamp</span> <span class="o">*</span> <span class="n">tez</span><span class="o">)</span> <span class="kt">list</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold</span>
+    <span class="o">(</span><span class="k">fun</span> <span class="o">(</span><span class="n">l</span><span class="o">,</span> <span class="n">x</span> <span class="o">:</span> <span class="o">(</span><span class="n">timestamp</span> <span class="o">*</span> <span class="n">tez</span><span class="o">)</span> <span class="kt">list</span> <span class="o">*</span> <span class="o">(</span><span class="n">timestamp</span> <span class="o">*</span> <span class="n">tez</span><span class="o">))</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">::</span> <span class="n">l</span><span class="o">)</span>
+    <span class="n">l</span> <span class="o">(</span><span class="bp">[]</span> <span class="o">:</span> <span class="o">(</span><span class="n">timestamp</span> <span class="o">*</span> <span class="n">tez</span><span class="o">)</span> <span class="kt">list</span><span class="o">)</span>
+
+<span class="k">let</span> <span class="n">get_time</span> <span class="o">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="o">)</span> <span class="o">:</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="nn">Current</span><span class="p">.</span><span class="n">time</span>
+
+<span class="k">let</span> <span class="n">prune</span> <span class="o">(</span><span class="n">threshold</span><span class="o">,</span> <span class="n">queue</span> <span class="o">:</span> <span class="n">tez</span> <span class="o">*</span> <span class="n">queue_t</span><span class="o">)</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">*</span> <span class="n">tez</span> <span class="o">*</span> <span class="n">queue_t</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">queue</span><span class="o">.</span><span class="n">left</span> <span class="k">with</span>
+    <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">size</span> <span class="n">queue</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="n">n</span>
+          <span class="k">then</span> <span class="n">stop</span> <span class="o">(</span><span class="n">threshold</span><span class="o">,</span> <span class="o">{</span><span class="n">left</span> <span class="o">=</span> <span class="n">empty_queue_comp</span><span class="o">;</span> <span class="n">right</span> <span class="o">=</span> <span class="n">empty_queue_comp</span><span class="o">})</span>
+          <span class="k">else</span> <span class="n">continue</span> <span class="o">(</span><span class="n">threshold</span><span class="o">,</span> <span class="o">{</span><span class="n">left</span> <span class="o">=</span> <span class="n">reverse</span> <span class="n">queue</span><span class="o">.</span><span class="n">right</span><span class="o">;</span> <span class="n">right</span> <span class="o">=</span> <span class="n">empty_queue_comp</span><span class="o">})</span>
+  <span class="o">|</span> <span class="n">hd</span><span class="o">::</span><span class="n">left_tl</span> <span class="o">-&gt;</span> <span class="k">let</span> <span class="n">ts</span> <span class="o">=</span> <span class="n">hd</span><span class="o">.</span><span class="mi">0</span> <span class="k">in</span>
+                   <span class="k">let</span> <span class="n">amount</span> <span class="o">=</span> <span class="n">hd</span><span class="o">.</span><span class="mi">1</span> <span class="k">in</span>
+                   <span class="k">if</span> <span class="n">ts</span> <span class="o">&gt;</span> <span class="nn">Current</span><span class="p">.</span><span class="n">time</span>
+                   <span class="k">then</span> <span class="n">stop</span> <span class="o">(</span><span class="n">threshold</span><span class="o">,</span> <span class="n">queue</span><span class="o">)</span>
+                   <span class="k">else</span> <span class="n">continue</span> <span class="o">(</span><span class="n">threshold</span> <span class="o">+</span> <span class="n">amount</span><span class="o">,</span> <span class="o">{</span><span class="n">left</span> <span class="o">=</span> <span class="n">left_tl</span><span class="o">;</span> <span class="n">right</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">right</span><span class="o">})</span>
+
+<span class="k">let</span> <span class="n">transfer</span> <span class="o">(</span><span class="n">trp</span><span class="o">,</span> <span class="n">sto</span> <span class="o">:</span> <span class="n">transfer_param</span> <span class="o">*</span> <span class="n">storage</span><span class="o">)</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span> <span class="o">*</span> <span class="n">storage</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="n">key</span> <span class="o">=</span> <span class="n">trp</span><span class="o">.</span><span class="mi">0</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">trp</span><span class="o">.</span><span class="mi">1</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">transfers</span> <span class="o">=</span> <span class="n">trp</span><span class="o">.</span><span class="mi">2</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">kh</span> <span class="o">=</span> <span class="n">trp</span><span class="o">.</span><span class="mi">3</span> <span class="k">in</span>
+  <span class="k">if</span> <span class="nn">Crypto</span><span class="p">.</span><span class="n">hash_key</span> <span class="n">key</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">key_user</span> <span class="o">&amp;&amp;</span> <span class="nn">Crypto</span><span class="p">.</span><span class="n">check</span> <span class="n">key</span> <span class="n">sign</span> <span class="o">(</span><span class="nn">Bytes</span><span class="p">.</span><span class="n">pack</span> <span class="o">(</span><span class="n">transfers</span><span class="o">,</span> <span class="n">sto</span><span class="o">.</span><span class="n">salt_user</span><span class="o">))</span> <span class="k">then</span>
+    <span class="k">let</span> <span class="n">current_threshold</span><span class="o">,</span> <span class="n">queue</span> <span class="o">=</span> <span class="nn">Loop</span><span class="p">.</span><span class="n">fold_while</span> <span class="n">prune</span> <span class="o">(</span><span class="n">sto</span><span class="o">.</span><span class="n">current_threshold</span><span class="o">,</span> <span class="n">sto</span><span class="o">.</span><span class="n">queue</span><span class="o">)</span> <span class="k">in</span>
+    <span class="k">let</span> <span class="n">total_amount</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">(</span><span class="k">fun</span> <span class="o">(</span><span class="n">acc</span><span class="o">,</span> <span class="n">amount_dest</span> <span class="o">:</span> <span class="n">tez</span> <span class="o">*</span> <span class="o">(</span><span class="n">tez</span> <span class="o">*</span> <span class="kt">unit</span> <span class="n">contract</span><span class="o">))</span>  <span class="o">-&gt;</span> <span class="n">amount_dest</span><span class="o">.</span><span class="mi">0</span> <span class="o">+</span> <span class="n">acc</span><span class="o">)</span> <span class="n">transfers</span> <span class="mi">0</span><span class="n">mutez</span> <span class="k">in</span>
+    <span class="k">let</span> <span class="n">ops</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span>
+                <span class="o">(</span><span class="k">fun</span> <span class="o">(</span><span class="n">amount</span><span class="o">,</span> <span class="n">destination</span> <span class="o">:</span> <span class="n">tez</span> <span class="o">*</span> <span class="kt">unit</span> <span class="n">contract</span><span class="o">)</span> <span class="o">-&gt;</span>
+                  <span class="nn">Operation</span><span class="p">.</span><span class="n">transaction</span> <span class="kt">unit</span> <span class="n">amount</span> <span class="n">destination</span><span class="o">)</span>
+                <span class="n">transfers</span> <span class="k">in</span>
+    <span class="o">(</span><span class="n">ops</span><span class="o">,</span>
+     <span class="o">{</span> <span class="n">key_user</span> <span class="o">=</span> <span class="n">kh</span><span class="o">;</span>
+       <span class="n">key_administrator</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">key_administrator</span> <span class="o">;</span>
+       <span class="n">current_threshold</span> <span class="o">=</span> <span class="n">current_threshold</span> <span class="o">-</span> <span class="n">total_amount</span><span class="o">;</span>
+       <span class="n">time_window</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">time_window</span><span class="o">;</span>
+       <span class="n">queue</span> <span class="o">=</span> <span class="o">{</span><span class="n">left</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">left</span><span class="o">;</span> <span class="n">right</span> <span class="o">=</span> <span class="o">(</span><span class="nn">Current</span><span class="p">.</span><span class="n">time</span><span class="o">,</span> <span class="n">total_amount</span><span class="o">)</span> <span class="o">::</span> <span class="n">queue</span><span class="o">.</span><span class="n">right</span><span class="o">};</span>
+       <span class="n">salt_user</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">salt_user</span> <span class="o">+</span> <span class="mi">1</span><span class="n">n</span><span class="o">;</span>
+       <span class="n">salt_administrator</span> <span class="o">=</span> <span class="n">sto</span><span class="o">.</span><span class="n">salt_administrator</span><span class="o">})</span>
+  <span class="k">else</span> <span class="o">(</span><span class="n">failwith</span> <span class="s2">"bad_signature"</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span> <span class="o">*</span> <span class="n">storage</span><span class="o">)</span>
+</pre></div>
+
+
+<p>The <code>transfer</code> entrypoint, illustrated by the CameLIGO code above, receives a public key, a list of new
+transfer orders and a signature of this list. The contract verifies
+that the hash of this key equals the stored key hash of the user. It
+also verifies that the signature of the payload is valid and created
+by the user. If either of these conditions are unfulfilled, the
+contract fails.</p>
+<p>The contract maintains a queue of all previous transfers that fell
+within the time window at the previous execution of the contract.  In
+the <code>transfer</code> entrypoint, this list is traversed, and all members of
+this queue that are now outside the time window are removed.</p>
+<p>The contract also maintains the <em>current threshold</em>, i.e., the amount of
+funds that can be spent at this moment. The current threshold is now updated
+by adding to it the sum of the funds in the removed elements in the
+previous step.</p>
+<p>If the user attempts to overspend, i.e., if the total of the funds
+in the new list of transfers exceeds the current threshold, then
+the contract will fail at this point. Otherwise, meaning that the list
+of ordered transfers are allowed by the time window and threshold,
+then a <code>TRANSFER_TOKEN</code> operation is emitted for each ordered
+transfer with the specified amount and destination.</p>
+<p><strong>Example</strong>. To illustrate the behavior of the <code>transfer</code> entrypoint,
+consider a contract that is configured so that no more than 30 ꜩ can be spent every 40 minutes.
+In other words, the time limit is set to 40 minutes and the initial
+threshold to 30 ꜩ. Assume the user has transferred 3 ꜩ from the
+contract at timestamp 12:20 (transfer <code>t1</code>), and 10 ꜩ at timestamp
+12:40 (transfer <code>t2</code>).
+After performing the last transfer, the current threshold is set to 30 - 10 - 3 = 17 ꜩ.
+We
+can illustrate the state of the contract by a timeline, as below. The timeline is decorated with
+all past transfers, and the part of the timeline that falls in the time window is highlighted
+in blue.</p>
+<p><img alt="Transfer entrypoint, initial state" src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/ep-transfer-1.png"></p>
+<p>Now, say the user attempts to transfer 30 ꜩ at 13:10 (transfer
+<code>t3</code>). The contract traverses the queue of past transfers. It finds
+that transfer <code>t1</code> falls outside the time window, prunes it, and so
+increments the current threshold by 3 from 17 to 20 ꜩ. Nevertheless,
+the amount of the transfer (30 ꜩ) exceeds the current threshold (20
+ꜩ), and hence the request rejected. The contract execution is
+cancelled, its state is unchanged and no operations are emitted.</p>
+<p><img alt="Transfer entrypoint, invalid transfer" src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/ep-transfer-2.png"></p>
+<p>The user must opt for a more tempered spending: this time, at
+timestamp 13:20, they request a transfer of 15 ꜩ (transfer <code>t4</code>). Again, the history
+is traversed and as before the current threshold is incremented
+to 20 ꜩ. Now, the amount of the transfer 15 ꜩ falls snugly under the
+current threshold of 20 ꜩ. Consequently the transfer is accepted, a <code>TRANSFER_TOKENS</code> operation is
+issued, and the queue and current threshold are updated:</p>
+<p><img alt="Transfer entrypoint, valid transfer" src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/ep-transfer-3.png"></p>
+<h3 id="receive">Receive</h3>
+<p>The third entrypoint, <code>receive</code> is used to transfer funds to the
+contract without provoking any other changes in its state. This
+entrypoint emits no operations and does not modify the storage. This
+is succinctly expressed in CameLIGO:</p>
+<div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">receive</span> <span class="o">(</span><span class="n">p</span><span class="o">,</span> <span class="n">s</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">*</span> <span class="n">storage</span><span class="o">)</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span> <span class="o">*</span> <span class="n">storage</span> <span class="o">=</span> <span class="o">(</span><span class="bp">[]</span> <span class="o">:</span> <span class="n">operation</span> <span class="kt">list</span><span class="o">),</span> <span class="n">s</span>
+</pre></div>
+
+
+<h2 id="approaches-to-formal-verification">Approaches to Formal Verification</h2>
+<p>The criticality of the Cortez wallet, the security motivation of the
+spending limit contract, and the difficulties of modifying
+already-deployed smart contracts make SLC a prime target for formal
+verification.
+In addition,
+the optimized representation of the queue induces a gap between the 
+intuitive behavior of the contract and its implementation, which makes 
+verification non-trivial.</p>
+<p>While code reviews and testing might be sufficient for non-critical programs,
+they are more likely answer the question of whether there is undesired behavior.
+Making sure that programs always behave as expected requires more rigorous methods, which is
+the mainspring of <strong>formal methods</strong>. At the heart of any formal method is the
+specification of a system: the definition of its desired behavior in a
+rigorous mathematics-based – formal – flavor.</p>
+<p>If a program is seen as a sentence in a programming language, then the <strong>semantics</strong> of this programming language
+is the rules that give a sense to this program, i.e.
+its behaviors. Hence, verifying a program is to verify
+that its semantics complies with its specification.</p>
+<p><strong>Model checking</strong> is a model-based formal method.
+Instead of reasoning on the program, verification is applied to a model:
+a transition state machine that enables the inspection of every possible execution path
+of the program. The specification, potentially written in temporal logics,
+can then either been verified on this model or a counter-example is exhibited.
+The drawback of model checking is the combinatorial explosion of paths that must be explored,
+whose number is proportional to the size of the model.</p>
+<p><strong>Abstract interpretation</strong> proposes to reason on an abstract
+semantics instead of reasoning on the concrete execution
+semantics. The purpose of abstract semantics is to provide dedicated
+construction to the specification to be proven. Consequently,
+the abstract interpretation eases the verification.  The difficulty here
+resides in designing an appropriate and sound approximation, a complex task
+that is also very dependent on the properties to prove.</p>
+<p><strong>Mechanized verification</strong>. It is possible to use a 
+proof assistant in order to mechanically assist the construction of a 
+proof establishing the correctness of a program. In this case, the 
+specification and the properties are written in the proof assistant 
+logics and the proof are driven in its tactics language.</p>
+<p><strong>Correctness-by-construction</strong> ensures compliance
+of the program with its specification using a top-down approach.
+The implementation is done
+in a theorem prover that (i) enables extraction of an executable program from the
+specification and (ii) enables the mechanized verification of the program.
+The program is then <em>formally certified</em>: it comes with its replayable formal proof.</p>
+<p><strong>Deductive verification</strong> enables verifying the compliance of the
+program with its specification directly on the behavior of the program
+thanks to a Hoare logics<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup> that enables reasoning on pre- and
+post-state of a program along with its semantics. The specification of
+the program is then expressed through properties that holds on the
+pre-state of the program execution, called <em>precondition</em> and
+properties that holds on the post-state of its execution, called
+<em>postcondition</em>. Together, the precondition, program and
+postcondition form a Hoare triplet.  While Hoare logics is a
+relation that might not terminate, <em>weakest precondition calculus</em>
+is a function that computes the weakest precondition for a program and
+a postcondition in order to form a valid Hoare triplet.  During the
+weakest precondition calculus proof obligations are produced.  In
+mainstream tools, they are dispatched to automatic provers that either
+validate them, refute them or cannot decide.
+While easing the proof engineer work, using automatic provers presents 
+two limits.
+In case of validating a proof obligation, an automatic prover does not 
+provide any proof term.
+When the automatic prover can't decide,
+the proof engineer has to
+provide a counter-example or
+handle the proof manually in a proof assistant. In that case, the 
+specification that is originally designed to suit an automatic prover
+may be inconvenient for the proof engineer working in a proof assistant.</p>
+<p>We have formally specified the Spending Limit Contract,
+in other words, described precisely and unambiguously its desired
+behavior. Using weakest precondition calculus of
+<a href="https://gitlab.com/nomadic-labs/mi-cho-coq/">Mi-Cho-Coq</a>, we
+have then proved that the SLC contract fulfills this
+specification. Not only do we ensure that SLC "does what it is
+supposed to do", that is, throttle spending. We also ensure that
+its execution does not cause any unintended run-time errors<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
+<h2 id="mi-cho-coq">Mi-Cho-Coq</h2>
+<p align="center">
+  <img src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/mi-cho-coq.png">
+</p>
+
+<p><a href="https://gitlab.com/nomadic-labs/mi-cho-coq/">Mi-Cho-Coq</a> is a
+formalization of the semantics of the Tezos smart contract language
+<a href="http://tezos.gitlab.io/whitedoc/michelson.html">Michelson</a> 
+in Coq.
+Michelson is a strongly typed, pure functional and stack-based 
+programming language.
+Each Michelson instruction can be seen as a function from input stack of
+ working data to an output stack, in a blockchain environment. The 
+blockchain environment gives current state of the blockchain, containing
+ information such as the current timestamp and the balance of the 
+executing contract.</p>
+<p>Whereas Michelson has always had a
+<a href="http://tezos.gitlab.io/whitedoc/michelson.html#language-semantics">semi-formal semantics</a>,
+encoding the semantics in a proof assistant such as Coq helps to
+ensure that all corner cases are unambiguously specified. Mi-Cho-Coq 
+also enables deductive verification of Michelson programs thanks to
+its weakest precondition calculus
+that enables using the high-level expressiveness
+of Coq. This requires that all proof obligations are discharged by the 
+proof engineer in Coq.</p>
+<p>In Mi-Cho-Coq, the semantics of Michelson programs is given by an
+evaluation function <code>eval</code> that is similar to the interpreter
+embedded in the <code>tezos-node</code>:</p>
+<div class="highlight"><pre><span></span>  <span class="kn">Fixpoint</span> <span class="n">eval</span> <span class="c">(* omitted parameters *)</span>
+           <span class="o">(</span><span class="n">env</span> <span class="o">:</span> <span class="o">@</span><span class="n">proto_env</span> <span class="n">param_ty</span><span class="o">)</span>
+           <span class="o">(</span><span class="n">i</span> <span class="o">:</span> <span class="n">instruction</span> <span class="n">param_ty</span> <span class="n">tff0</span> <span class="n">A</span> <span class="n">B</span><span class="o">)</span>
+           <span class="o">(</span><span class="n">fuel</span> <span class="o">:</span> <span class="n">Datatypes</span><span class="o">.</span><span class="n">nat</span><span class="o">)</span>
+           <span class="o">(</span><span class="n">SA</span> <span class="o">:</span> <span class="n">stack</span> <span class="n">A</span><span class="o">)</span>
+           <span class="o">{</span><span class="k">struct</span> <span class="n">fuel</span><span class="o">}</span> <span class="o">:</span> <span class="n">M</span> <span class="o">(</span><span class="n">stack</span> <span class="n">B</span><span class="o">)</span> <span class="o">:=</span>
+    <span class="k">match</span> <span class="n">fuel</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="n">O</span> <span class="o">=&gt;</span> <span class="n">Failed</span> <span class="o">_</span> <span class="n">Out_of_fuel</span>
+    <span class="o">|</span> <span class="n">S</span> <span class="n">n</span> <span class="o">=&gt;</span>
+      <span class="k">match</span> <span class="n">i</span><span class="o">,</span> <span class="n">SA</span><span class="o">,</span> <span class="n">env</span> <span class="k">with</span>
+      <span class="c">(* ... *)</span>
+      <span class="c">(* Semantics of the NOOP instruction *)</span>
+      <span class="o">|</span> <span class="n">NOOP</span><span class="o">,</span> <span class="n">SA</span><span class="o">,</span> <span class="o">_</span> <span class="o">=&gt;</span> <span class="n">Return</span> <span class="n">SA</span>
+      <span class="c">(* Semantics of the SEQ instruction *)</span>
+      <span class="o">|</span> <span class="n">SEQ</span> <span class="n">i1</span> <span class="n">i2</span><span class="o">,</span> <span class="n">SA</span><span class="o">,</span> <span class="n">env</span> <span class="o">=&gt;</span>
+        <span class="k">let</span><span class="o">!</span> <span class="n">r</span> <span class="o">:=</span> <span class="n">eval</span> <span class="n">env</span> <span class="n">i1</span> <span class="n">n</span> <span class="n">SA</span> <span class="k">in</span>
+        <span class="n">eval</span> <span class="n">env</span> <span class="n">i2</span> <span class="n">n</span> <span class="n">r</span>
+      <span class="c">(* ... *)</span>
+</pre></div>
+
+
+<p>The semantics of a Michelson instruction <code>i</code> is given by the recursive
+function <code>eval</code>. This is a function that takes as input a blockchain state <code>env</code>, an input
+stack <code>SA</code> and a <code>fuel</code> argument, and returns an output stack.
+To maintain soundness of proofs expressed in Coq, all functions must be total and terminating.
+To fulfill the first requirement, the result of the <code>eval</code> is wrapped in the error monad: <code>M (stack B)</code>.
+This simply means that <code>eval</code> either returns an output stack of type <code>stack B</code> or
+fails, which happens in the case of run-time errors or lack of <code>fuel</code>.
+The <code>fuel</code> (not to be confused with gas) argument ensures that the <code>eval</code> function is terminating, by
+bounding the maximum number of recursive steps that the function is allowed to take.</p>
+<p>The snippet above demonstrates the semantics of the instruction
+<code>NOOP</code>, that simply returns the input stack <code>SA</code> unchanged. The
+semantics of the sequencing instruction <code>SEQ i1 i2</code> consists of first
+executing <code>i1</code>. If successful, a new stack <code>r</code> is obtained on which
+<code>i2</code> is executed.</p>
+<h2 id="verifying-spending-limit-in-mi-cho-coq">Verifying Spending Limit in Mi-Cho-Coq</h2>
+<p>As the interpreter of Mi-Cho-Coq looks similar to the one already implemented in
+the <code>tezos-node</code>, one might wonder why go through greats lengths to
+rewrite the same thing? The answer is that thanks to the rich
+type-system of Coq, we can now state and prove properties on the
+behavior of <code>eval</code>. For instance, we can formalize the <em>informal</em> specification of
+Spending Limit Contract sketched out above in Coq, and then assert that each execution
+of the contract should adhere to the specification. This assertion translates into the
+following theorem, as expressed in Coq:</p>
+<div class="highlight"><pre><span></span><span class="kn">Theorem</span> <span class="n">slc_correct</span> <span class="n">input</span> <span class="n">output</span> <span class="o">:</span>
+  <span class="k">forall</span> <span class="n">fuel</span><span class="o">,</span>
+    <span class="n">fuel</span> <span class="o">&gt;=</span> <span class="n">slc_fuel_bound</span> <span class="n">input</span> <span class="o">-&gt;</span>
+    <span class="n">eval</span> <span class="n">env</span> <span class="n">slc</span> <span class="n">fuel</span> <span class="n">input</span> <span class="o">=</span> <span class="n">Return</span> <span class="n">output</span> <span class="o">&lt;-&gt;</span>
+    <span class="n">slc_spec</span> <span class="n">fuel</span> <span class="n">input</span> <span class="n">output</span><span class="o">.</span>
+</pre></div>
+
+
+<p>We let <code>slc_fuel</code> be a function giving a bound on the number of steps
+necessary to execute the contract, that depends notably on the length of
+the queue of past transfers. The script of the SLC smart contract is <code>slc</code> and
+its specification is given by <code>slc_spec</code>. This theorem states that
+when given a sufficient amount of fuel, the spending limit
+contract when executed on the <code>input</code> stack will return the stack <code>output</code>
+if, and only if (denoted <code>&lt;-&gt;</code> in Coq), the relation between this input
+and output is exactly as described in <code>slc_spec</code>.</p>
+<p>The semantics of a Michelson contract is a function from an input (pre-) stack to an output (post-)stack,
+and the contract is a sequence of instruction.
+Hence, it is adequate to use the weakest precondition calculus of Mi-Cho-Coq.
+This calculus translates the statement <code>eval env slc fuel input = Return output</code>
+into a logical relation between the input and output stacks.
+For the details on how we translate the informal specification given
+above, into its formalized version <code>slc_spec</code> as well as the actual
+proof of the theorem using the weakest precondition calculus, we refer to the ongoing
+<a href="https://gitlab.com/nomadic-labs/mi-cho-coq/merge_requests/51">Mi-Cho-Coq merge request</a>
+containing the full development.</p>
+<p style="margin: 40px 20px" align="center">
+  <a href="http://localhost:8000/images/slc-verif/coq-slc_correct.gif">
+  <img style="margin-right: 60px; border: 2px solid #eee" src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/coq-slc_correct.gif"></a>
+</p>
+
+<p>To summarize, we have elaborated an informal specification of the
+Spending Limit Contract, that we have then formalized in Coq. We have then
+verified that the Spending Limit Contract conforms to this specification using Mi-Cho-Coq.
+In addition to showing that SLC behaves as expected, this also proves that the Spending Limit Contract
+cannot provoke any unforeseen run-time errors. All-in-all, this work
+required roughly three weeks of work, and the full development consists of
+1377 lines of Coq code. Of these lines, 269 consist of auxiliary
+lemmas that we hope will be helpful for proving future contracts.
+Additionally, 518 lines concern the specification and verification of
+the code manipulating the queue of past transfers. As this data
+structure, and its optimized representation used in SLC, is standard, we
+can reasonably assume the reusability of these proofs.</p>
+<h1 id="next-steps">Next Steps</h1>
+<p>While this development allows us to increase trust in the
+Spending Limit Contract, and by extension, the Cortez wallet, we have
+still only placed one half of the verification puzzle. The
+specification we have proved only concerns the <em>functional</em>
+correctness of SLC, that is, its input-output behavior.
+However, there is another set of properties
+called temporal correctness that concerns the behavior
+of a program over a sequence of calls.</p>
+<p>For instance, in the case of the Spending Limit Contract, we would
+like to be able to specify and prove that the funds in the contract
+can <em>eventually</em> be used.  This type of property cannot be assured by
+simply establishing a relation between the contract's input and its
+computed output. Instead, the behavior of the contract must be
+investigated over all possible sequences of calls. This kind of
+reasoning is typically the domain of tools called
+<a href="https://en.wikipedia.org/wiki/Model_checking">model checkers</a>. Case
+in point, the temporal properties of an auction contract for Tezos
+have been verified<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> using the model checker
+<a href="http://cubicle.lri.fr/">Cubicle</a>.  However, temporal properties can
+also be expressed and proved deductively in Coq, as have been
+done for <a href="https://arxiv.org/abs/1801.00687">Scilla</a>, another smart-contract
+language. The next step in our plan to assure the trust in
+Cortez is to complete the verification puzzle for SLC by specifying
+and proving its desired temporal properties, either through model
+checking or by deductive proof.</p>
+<p>Another important missing link is that between these formal proofs,
+currently stored in a <a href="https://gitlab.com/nomadic-labs/mi-cho-coq/blob/master/src/contracts_coq/multisig.v">GitLab
+repository</a>,
+and the actual smart contracts that live <a href="https://better-call.dev/main/KT1DUfaMfTRZZkvZAYQT5b3byXnvqoAykc43/script">on the block
+chain</a>.
+Consider a user that <a href="https://tezos.stackexchange.com/questions/1696/how-to-verify-the-manager-tz-script-code">wants to ensure the
+validity of a purported correctness proof of a deployed contract</a>.
+They must first install Coq and Mi-Cho-Coq and have Coq verify the
+correctness proof of the contract.  Then, they must download the
+contract and verify that it is indeed exactly the same as the one
+proved in the Mi-Cho-Coq distribution.</p>
+<p>We envision a smart contract explorer that automatically associates
+contract hashes with properties, such as correctness specifications
+and their associated proofs. Users can add new proofs and the explorer
+verifies their validity. Additionally, the explorer provides
+instructions allowing other users to replicate the proofs.  This kind of a
+explorer would be important to illustrate the nature and importance
+of formal methods to end-users, and would increase overall confidence
+in smart contract-based systems.</p>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:1">
+<p>A run-time error may result from a programming error but can
+also be caused intentionally to halt an execution, for instance when
+erroneous parameters have been supplied.  This is used in SLC in the
+transfer entrypoint. When the user requests a transfer, then its sum is
+subtracted from current threshold. Unless the threshold is superior or
+equal to the sum, this subtraction results in a tez overflow that
+halts execution. This implementation effectively disallows overspending.&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+<li id="fn:2">
+<p>Sylvain Conchon, Alexandrina Korneva and Fatiha Zaidi. Verifying
+Smart Contracts with Cubicle. Presented at
+<a href="https://sites.google.com/view/fmbc/home">FMBC'2019</a>, publication
+forthcoming.&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>
+</li>
+<li id="fn:3">
+<p>Chris Okasaki, Purely Functional Data Structures, p. 42.&nbsp;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">↩</a></p>
+</li>
+<li id="fn:4">
+<p>C. A. R. Hoare. 1969. An axiomatic basis for computer programming. 
+Commun. ACM 12, 10 (October 1969), 576-580. 
+DOI=http://dx.doi.org/10.1145/363235.363259&nbsp;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">↩</a></p>
+</li>
+</ol>
+</div></section>
+        <hr class="uk-article-divider">
+    </article>
+
+
+</div>
+
+        <div class="uk-width-medium-1-5 uk-hidden-small">
+
+            <div class="uk-panel uk-panel-box">
+                <form class="uk-search" action="search.html" data-uk-search="">
+                    <input class="uk-search-field tipue_search" type="search" name="q" id="tipue_search_input" autocomplete="off" placeholder="Search...">
+                </form>
+            </div>
+
+            <div class="uk-panel uk-panel-box">
+                <ul class="uk-nav uk-nav-side">
+                    <li class="uk-nav-header">Categories</li>
+                    <li><a href="http://localhost:8000/category/announcements.html">announcements</a></li>
+                    <li><a href="http://localhost:8000/category/cortez.html">cortez</a></li>
+                    <li class="uk-active"><a href="http://localhost:8000/category/in-depth.html">in-depth</a></li>
+                    <li><a href="http://localhost:8000/category/meanwhile.html">meanwhile</a></li>
+                    <li><a href="http://localhost:8000/category/posts.html">posts</a></li>
+
+                    <li class="uk-nav-divider"></li>
+                    <li><a href="http://localhost:8000/archives.html">Archives</a></li>
+                </ul>
+            </div>
+
+            <div class="uk-panel uk-panel-box">
+                <h3 class="uk-panel-title">Receive Updates</h3>
+                <a rel="alternate" type="application/atom+xml" href="http://localhost:8000/feeds/all.atom.xml" class="mg-feed"><i class="uk-icon-rss uk-icon-medium"></i> ATOM</a>
+            </div>
+
+            <div class="uk-panel uk-panel-box">
+                <h3 class="uk-panel-title">Contacts</h3>
+                <a class="mg-icon-link" href="https://gitlab.com/nomadic-labs">
+                    <i class="uk-icon-git uk-icon-medium"></i>
+                </a>
+                <a class="mg-icon-link" href="mailto:contact@nomadic-labs.com">
+                    <i class="uk-icon-envelope uk-icon-medium"></i>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</main>
+
+<footer class="mg-footer">
+    <div class="uk-container uk-container-center uk-text-center">
+
+        <div class="mg-icons-small uk-subnav uk-visible-small">
+            <li><a rel="alternate" type="application/atom+xml" href="http://localhost:8000/feeds/all.atom.xml" class="uk-icon-button uk-icon-rss"></a></li>
+            <li>
+                <a href="https://gitlab.com/nomadic-labs" class="uk-icon-button uk-icon-git"></a>
+            </li>
+            <li>
+                <a href="mailto:contact@nomadic-labs.com" class="uk-icon-button uk-icon-envelope"></a>
+            </li>
+        </div>
+
+        <div class="mg-author uk-panel">
+            <p>© 2019. Nomadic Labs All rights reserved.<br>Code snippets in the pages are released under <a href="http://opensource.org/licenses/MIT" target="_blank">The MIT License</a>, unless otherwise specified.</p>
+
+            <p>Powered by <a href="http://blog.getpelican.com/">Pelican</a>.<br class="uk-visible-small"> Theme <a href="https://github.com/lucachr/pelican-mg">mg</a></p>
+        </div>
+    </div>
+</footer>
+
+<div id="mg-offcanvas" class="uk-offcanvas">
+    <div class="uk-offcanvas-bar">
+
+        <form class="uk-search" action="search.html" data-uk-search="">
+            <input class="uk-search-field" type="search" name="q" id="tipue_search_input" autocomplete="off" placeholder="Search...">
+        </form>
+
+        <ul class="uk-nav uk-nav-offcanvas" data-uk-nav="">
+            <li class="uk-nav-header">Categories</li>
+            <li><a href="http://localhost:8000/category/announcements.html">announcements</a></li>
+            <li><a href="http://localhost:8000/category/cortez.html">cortez</a></li>
+            <li class="uk-active"><a href="http://localhost:8000/category/in-depth.html">in-depth</a></li>
+            <li><a href="http://localhost:8000/category/meanwhile.html">meanwhile</a></li>
+            <li><a href="http://localhost:8000/category/posts.html">posts</a></li>
+
+            <li class="uk-nav-divider"></li>
+            <li><a href="http://localhost:8000/">Archives</a></li>
+        </ul>
+    </div>
+</div>
+
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/jquery_002.js"></script>
+<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/uikit.js"></script>
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/search.js"></script>
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/tipuesearch_set.js"></script>
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/tipuesearch.js"></script>
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/jquery.js"></script>
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/plugins.js"></script>
+<script src="Formally%20Verifying%20a%20Critical%20Smart%20Contract_files/main-search.js"></script>
+
+
+
+
+</body></html>
